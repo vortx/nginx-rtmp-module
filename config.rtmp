@@ -1,0 +1,42 @@
+rtmp_auto_push on;
+rtmp_auto_push_reconnect 1s;
+
+rtmp {
+        server {
+                listen 1935;
+                chunk_size 4096;
+
+                application live {
+                        live on;
+                        record off;
+                  push rtmp://localhost:1935/from_cam/myStream;
+               }
+
+               application from_cam {
+                        live on;
+                        hls on;
+                        hls_path /it/hls;
+                        hls_cleanup on;
+                        hls_fragment_slicing aligned;
+                        hls_fragment 5s;
+                        hls_playlist_length 15s;
+                        hls_sync 100ms;
+                        hls_nested off;
+                        meta copy;
+                        hls_type live;
+                        hls_variant _640p BANDWIDTH=564000 RESOLUTION=640x480;
+                }
+
+		application vod {
+		        play /it/vod;
+	        }
+
+                application live3 {
+                   live on;
+                   allow publish all;
+                   allow play all;
+                }
+
+        }
+}
+
